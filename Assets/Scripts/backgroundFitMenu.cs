@@ -2,12 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class backgroundFit : MonoBehaviour
+public class backgroundFitMenu : MonoBehaviour
 {
-    public GameObject player;
-    private int targetLevel = 2;
-    public Sprite[] backgroundArray;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -17,12 +13,7 @@ public class backgroundFit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playerController pc = player.GetComponent<playerController>();
-        if (pc.level >= targetLevel && pc.level <= backgroundArray.Length)
-        {
-            this.gameObject.GetComponent<SpriteRenderer>().sprite = backgroundArray[pc.level - 1];
-            targetLevel++;
-        }
+        
     }
 
     void Awake()

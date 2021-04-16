@@ -15,10 +15,10 @@ public class starSpawner : MonoBehaviour
         float offset = 0.3f;
         minX = (((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) * -1) + offset;
         maxX = ((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) - offset;
-        StartCoroutine(zacznijSpawn());
+        StartCoroutine(beginSpawn());
     }
 
-    IEnumerator zacznijSpawn()
+    IEnumerator beginSpawn()
     {
         yield return new WaitForSeconds(Random.Range(4f, 9f));
 
@@ -28,7 +28,7 @@ public class starSpawner : MonoBehaviour
 
         k.transform.position = new Vector2(x, transform.position.y);
 
-        StartCoroutine(zacznijSpawn());
+        StartCoroutine(beginSpawn());
     }
 
     // Update is called once per frame

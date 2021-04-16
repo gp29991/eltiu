@@ -20,14 +20,21 @@ public class starDisappear : MonoBehaviour
     {
         if (collider.tag == "Floor")
         {
-            //delay();
+            StartCoroutine("blink");
             Destroy(gameObject, 3f);
         }
     }
 
-    /*IEnumerator delay()
+    private IEnumerator blink()
     {
-        yield return new WaitForSeconds(3f);
-    }*/
+        yield return new WaitForSeconds(2f);
+        while (true)
+        {
+            yield return new WaitForSeconds(0.1f);
+            this.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            this.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        }
+    }
 
 }

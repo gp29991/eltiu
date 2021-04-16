@@ -20,6 +20,18 @@ public class playerController : MonoBehaviour
     private int timer;
     public int points = 0;
     public GameObject restartPanel;
+    public int level = 1;
+    public Text levelText;
+    private static int levelThreshold = 5;
+    private int targetScore = levelThreshold;
+    public bool hasBomb = false;
+    public GameObject bombButton;
+    public GameObject flash;
+    public bool hasInv = false;
+    public bool isInv = false;
+    public GameObject invButton;
+    public Material flashEffect;
+    private Material defaultMaterial;
 
     private void Awake()
     {
@@ -28,6 +40,7 @@ public class playerController : MonoBehaviour
         float offset = 0.3f;
         minX = (((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) * -1) + offset;
         maxX = ((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) - offset;
+        defaultMaterial = this.gameObject.GetComponent<SpriteRenderer>().material;
     }
 
     // Start is called before the first frame update
@@ -37,6 +50,8 @@ public class playerController : MonoBehaviour
         StartCoroutine(CountTime());
         timer = 0;
         restartPanel.gameObject.SetActive(false);
+        bombButton.gameObject.SetActive(false);
+        invButton.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -45,6 +60,12 @@ public class playerController : MonoBehaviour
         move();
         PlayerBounce();
         pointText.text = "x " + points.ToString();
+        if (points >= targetScore)
+        {
+            level++;
+            levelText.text = "POZIOM: " + level.ToString();
+            targetScore += levelThreshold;
+        }
     }
 
     void PlayerBounce()
@@ -109,7 +130,7 @@ public class playerController : MonoBehaviour
         yield return new WaitForSeconds(1f);
         timer++;
 
-        timer_Text.text = "Czas:  " + timer;
+        timer_Text.text = "CZAS: " + timer;
         StartCoroutine(CountTime());
     }
 
@@ -117,11 +138,13 @@ public class playerController : MonoBehaviour
     {
         if (collider.tag == "Icicle")
         {
-            restartPanel.gameObject.SetActive(true);
-            Time.timeScale = 0f;
-            
-            //StartCoroutine(RestartGame());
-            
+            if (!isInv)
+            {
+                restartPanel.gameObject.SetActive(true);
+                Time.timeScale = 0f;
+                bombButton.gameObject.SetActive(false);
+                invButton.gameObject.SetActive(false);
+            }
         }
 
         if (collider.tag == "Star")
@@ -130,10 +153,68 @@ public class playerController : MonoBehaviour
             Destroy(collider.gameObject);
         }
 
-        
+        if (collider.tag == "Bomb")
+        {
+            hasBomb = true;
+            bombButton.gameObject.SetActive(true);
+            Destroy(collider.gameObject);
+        }
+
+        if (collider.tag == "Inv")
+        {
+            hasInv = true;
+            invButton.gameObject.SetActive(true);
+            Destroy(collider.gameObject);
+        }
+
     }
 
-    
+    public void Boom()
+    {
+        hasBomb = false;
+        bombButton.gameObject.SetActive(false);
+        //Debug.Log("Boom!");
+        StartCoroutine("Flash");
+        GameObject[] clones = GameObject.FindGameObjectsWithTag("Icicle");
+        foreach (var clone in clones)
+        {
+            Destroy(clone);
+        }
+    }
 
-    
+    IEnumerator Flash()
+    {
+        flash.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        flash.SetActive(false);
+    }
+
+    public void Inv()
+    {
+        hasInv = false;
+        invButton.gameObject.SetActive(false);
+        StartCoroutine("SetInv");
+        StartCoroutine("SpriteFlash");
+    }
+
+    IEnumerator SetInv()
+    {
+        isInv = true;
+        yield return new WaitForSeconds(5f);
+        isInv = false;
+    }
+
+    IEnumerator SpriteFlash()
+    {
+        float timeLeft = 5.0f;
+        while (timeLeft > 0.0f)
+        {
+            yield return new WaitForSeconds(0.1f);
+            this.gameObject.GetComponent<SpriteRenderer>().material = flashEffect;
+            timeLeft -= 0.1f;
+            yield return new WaitForSeconds(0.1f);
+            this.gameObject.GetComponent<SpriteRenderer>().material = defaultMaterial;
+            timeLeft -= 0.1f;
+        }
+    }
 }

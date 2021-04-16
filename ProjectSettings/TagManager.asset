@@ -7,6 +7,9 @@ TagManager:
   - Icicle
   - Star
   - Floor
+  - Bomb
+  - Ground
+  - Inv
   layers:
   - Default
   - TransparentFX
