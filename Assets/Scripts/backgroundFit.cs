@@ -34,7 +34,7 @@ public class backgroundFit : MonoBehaviour
         Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
         //print("Sprite x: " + spriteSize.x + ", Camera x: " + cameraSize.x);
 
-        float scaleX = (cameraSize.x * 1.2f) / spriteSize.x;
+        float scaleX = (cameraSize.x * 1.4f) / spriteSize.x;
         float scaleY = cameraSize.y / spriteSize.y;
 
         Vector2 scale = new Vector2(scaleX, scaleY);

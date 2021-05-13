@@ -13,7 +13,7 @@ public class playerController : MonoBehaviour
     private Animator anim;
     private SpriteRenderer sr;
 
-    float speed = 3f;
+    public float speed = 3f;
 
     public Text timer_Text;
     public Text pointText;
@@ -32,6 +32,11 @@ public class playerController : MonoBehaviour
     public GameObject invButton;
     public Material flashEffect;
     private Material defaultMaterial;
+    public GameObject uiStar;
+    public bool hasSpeed = false;
+    public GameObject speedButton;
+    public GameObject music;
+    private sounds soundScript;
 
     private void Awake()
     {
@@ -41,6 +46,7 @@ public class playerController : MonoBehaviour
         minX = (((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) * -1) + offset;
         maxX = ((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) - offset;
         defaultMaterial = this.gameObject.GetComponent<SpriteRenderer>().material;
+        soundScript = music.GetComponent<sounds>();
     }
 
     // Start is called before the first frame update
@@ -52,6 +58,7 @@ public class playerController : MonoBehaviour
         restartPanel.gameObject.SetActive(false);
         bombButton.gameObject.SetActive(false);
         invButton.gameObject.SetActive(false);
+        speedButton.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -59,7 +66,7 @@ public class playerController : MonoBehaviour
     {
         move();
         PlayerBounce();
-        pointText.text = "x " + points.ToString();
+        pointText.text = "×" + points.ToString();
         if (points >= targetScore)
         {
             level++;
@@ -130,7 +137,7 @@ public class playerController : MonoBehaviour
         yield return new WaitForSeconds(1f);
         timer++;
 
-        timer_Text.text = "CZAS: " + timer;
+        timer_Text.text = timer.ToString();
         StartCoroutine(CountTime());
     }
 
@@ -144,6 +151,7 @@ public class playerController : MonoBehaviour
                 Time.timeScale = 0f;
                 bombButton.gameObject.SetActive(false);
                 invButton.gameObject.SetActive(false);
+                speedButton.gameObject.SetActive(false);
             }
         }
 
@@ -151,12 +159,16 @@ public class playerController : MonoBehaviour
         {
             points++;
             Destroy(collider.gameObject);
+            music.GetComponent<AudioSource>().PlayOneShot(soundScript.starPickup, 1.5f);
+            uiStar.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
         }
 
         if (collider.tag == "Bomb")
         {
             hasBomb = true;
             bombButton.gameObject.SetActive(true);
+            music.GetComponent<AudioSource>().PlayOneShot(soundScript.powerPickup, 1f);
+            bombButton.transform.GetChild(0).GetChild(0).GetComponent<ParticleSystem>().Play();
             Destroy(collider.gameObject);
         }
 
@@ -164,6 +176,17 @@ public class playerController : MonoBehaviour
         {
             hasInv = true;
             invButton.gameObject.SetActive(true);
+            music.GetComponent<AudioSource>().PlayOneShot(soundScript.powerPickup, 1f);
+            invButton.transform.GetChild(0).GetChild(0).GetComponent<ParticleSystem>().Play();
+            Destroy(collider.gameObject);
+        }
+
+        if (collider.tag == "Speed")
+        {
+            hasSpeed = true;
+            speedButton.gameObject.SetActive(true);
+            music.GetComponent<AudioSource>().PlayOneShot(soundScript.powerPickup, 1f);
+            speedButton.transform.GetChild(0).GetChild(0).GetComponent<ParticleSystem>().Play();
             Destroy(collider.gameObject);
         }
 
@@ -173,7 +196,7 @@ public class playerController : MonoBehaviour
     {
         hasBomb = false;
         bombButton.gameObject.SetActive(false);
-        //Debug.Log("Boom!");
+        music.GetComponent<AudioSource>().PlayOneShot(soundScript.bombActivate, 4f);
         StartCoroutine("Flash");
         GameObject[] clones = GameObject.FindGameObjectsWithTag("Icicle");
         foreach (var clone in clones)
@@ -193,6 +216,7 @@ public class playerController : MonoBehaviour
     {
         hasInv = false;
         invButton.gameObject.SetActive(false);
+        music.GetComponent<AudioSource>().PlayOneShot(soundScript.invActivate, 15f);
         StartCoroutine("SetInv");
         StartCoroutine("SpriteFlash");
     }
@@ -216,5 +240,23 @@ public class playerController : MonoBehaviour
             this.gameObject.GetComponent<SpriteRenderer>().material = defaultMaterial;
             timeLeft -= 0.1f;
         }
+    }
+
+    public void Speed()
+    {
+        hasSpeed = false;
+        speedButton.gameObject.SetActive(false);
+        music.GetComponent<AudioSource>().PlayOneShot(soundScript.speedActivate, 10f);
+        StartCoroutine("SetSpeed");
+    }
+
+    IEnumerator SetSpeed()
+    {
+        float currentSpeed = speed;
+        speed = currentSpeed * 2;
+        music.gameObject.GetComponent<AudioSource>().pitch = 1.5f;
+        yield return new WaitForSeconds(10f);
+        speed = currentSpeed;
+        music.gameObject.GetComponent<AudioSource>().pitch = 1f;
     }
 }

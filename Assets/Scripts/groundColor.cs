@@ -28,6 +28,15 @@ public class groundColor : MonoBehaviour
             case 3:
                 this.GetComponent<SpriteRenderer>().color = new Color(0.27f, 0.29f, 0.63f, 1f);
                 break;
+            case 4:
+                this.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 1f, 1f);
+                break;
+            case 5:
+                this.GetComponent<SpriteRenderer>().color = new Color(1f, 0.75f, 0.97f, 1f);
+                break;
+            case 6:
+                this.GetComponent<SpriteRenderer>().color = new Color(0.66f, 1f, 1f, 1f);
+                break;
         }
     }
 }

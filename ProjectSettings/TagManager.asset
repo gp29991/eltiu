@@ -10,6 +10,7 @@ TagManager:
   - Bomb
   - Ground
   - Inv
+  - Speed
   layers:
   - Default
   - TransparentFX
@@ -49,4 +50,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Particles
+    uniqueID: 2861396361
     locked: 0

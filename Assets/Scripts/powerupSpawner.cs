@@ -7,6 +7,7 @@ public class powerupSpawner : MonoBehaviour
 
     public GameObject bomb;
     public GameObject inv;
+    public GameObject speed;
     private float minX;
     private float maxX;
     public GameObject player;
@@ -24,7 +25,7 @@ public class powerupSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(Random.Range(10f, 20f));
         playerController pc = player.GetComponent<playerController>();
-        if (!pc.hasBomb || !pc.hasInv)
+        if (!pc.hasBomb || !pc.hasInv || !pc.hasSpeed)
         {
             int random = RandomPower(pc);
             GameObject k = null;
@@ -36,6 +37,9 @@ public class powerupSpawner : MonoBehaviour
                     break;
                 case 2:
                     k = Instantiate(inv);
+                    break;
+                case 3:
+                    k = Instantiate(speed);
                     break;
             }
 
@@ -53,7 +57,7 @@ public class powerupSpawner : MonoBehaviour
         int random = 0;
         while (!validPower)
         {
-            random = Random.Range(1, 3);
+            random = Random.Range(1, 4);
             switch (random)
             {
                 case 1:
@@ -64,6 +68,12 @@ public class powerupSpawner : MonoBehaviour
                     break;
                 case 2:
                     if (!pc.hasInv)
+                    {
+                        validPower = true;
+                    }
+                    break;
+                case 3:
+                    if (!pc.hasSpeed)
                     {
                         validPower = true;
                     }
