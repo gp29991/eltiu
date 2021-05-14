@@ -217,28 +217,29 @@ public class playerController : MonoBehaviour
         hasInv = false;
         invButton.gameObject.SetActive(false);
         music.GetComponent<AudioSource>().PlayOneShot(soundScript.invActivate, 15f);
+        isInv = true;
         StartCoroutine("SetInv");
         StartCoroutine("SpriteFlash");
     }
 
     IEnumerator SetInv()
     {
-        isInv = true;
+        //isInv = true;
         yield return new WaitForSeconds(5f);
         isInv = false;
     }
 
     IEnumerator SpriteFlash()
     {
-        float timeLeft = 5.0f;
-        while (timeLeft > 0.0f)
+        //float timeLeft = 5.0f;
+        while(isInv) //(timeLeft > 0.0f)
         {
             yield return new WaitForSeconds(0.1f);
             this.gameObject.GetComponent<SpriteRenderer>().material = flashEffect;
-            timeLeft -= 0.1f;
+            //timeLeft -= 0.1f;
             yield return new WaitForSeconds(0.1f);
             this.gameObject.GetComponent<SpriteRenderer>().material = defaultMaterial;
-            timeLeft -= 0.1f;
+            //timeLeft -= 0.1f;
         }
     }
 
