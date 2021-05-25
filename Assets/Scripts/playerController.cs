@@ -14,6 +14,7 @@ public class playerController : MonoBehaviour
     private SpriteRenderer sr;
 
     public float speed = 3f;
+    private float defaultSpeed;
 
     public Text timer_Text;
     public Text pointText;
@@ -37,6 +38,7 @@ public class playerController : MonoBehaviour
     public GameObject speedButton;
     public GameObject music;
     private sounds soundScript;
+    private int bestScore;
 
     private void Awake()
     {
@@ -47,6 +49,7 @@ public class playerController : MonoBehaviour
         maxX = ((Camera.main.aspect * (Camera.main.orthographicSize * 2)) / 2) - offset;
         defaultMaterial = this.gameObject.GetComponent<SpriteRenderer>().material;
         soundScript = music.GetComponent<sounds>();
+        defaultSpeed = speed;
     }
 
     // Start is called before the first frame update
@@ -56,9 +59,11 @@ public class playerController : MonoBehaviour
         StartCoroutine(CountTime());
         timer = 0;
         restartPanel.gameObject.SetActive(false);
+        restartPanel.transform.GetChild(3).gameObject.SetActive(false);
         bombButton.gameObject.SetActive(false);
         invButton.gameObject.SetActive(false);
         speedButton.gameObject.SetActive(false);
+        bestScore = LoadBestScore();
     }
 
     // Update is called once per frame
@@ -94,7 +99,6 @@ public class playerController : MonoBehaviour
 
     public void move()
     {
-        //float h = Input.GetAxis("Horizontal");
         if (Input.touchCount > 0)
         {
             var h = Input.GetTouch(0);
@@ -113,11 +117,6 @@ public class playerController : MonoBehaviour
                 sr.flipX = true;
                 anim.SetBool("walking", true);
             }
-            /*else if (h == 0)
-            {
-                anim.SetBool("walking", false);
-            }*/
-
             transform.position = temp;
         }
         else if (Input.touchCount == 0)
@@ -129,7 +128,6 @@ public class playerController : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        //UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     IEnumerator CountTime()
@@ -148,6 +146,8 @@ public class playerController : MonoBehaviour
             if (!isInv)
             {
                 restartPanel.gameObject.SetActive(true);
+                restartPanel.transform.GetChild(2).GetComponent<Text>().text = "WYNIK: " + points.ToString() + "\n" + "NAJLEPSZY: " + PlayerPrefs.GetInt("bestScore").ToString();
+                SaveBestScore();
                 Time.timeScale = 0f;
                 bombButton.gameObject.SetActive(false);
                 invButton.gameObject.SetActive(false);
@@ -253,11 +253,33 @@ public class playerController : MonoBehaviour
 
     IEnumerator SetSpeed()
     {
-        float currentSpeed = speed;
-        speed = currentSpeed * 2;
+        //float currentSpeed = speed;
+        speed = defaultSpeed * 2; //currentSpeed * 2;
         music.gameObject.GetComponent<AudioSource>().pitch = 1.5f;
         yield return new WaitForSeconds(10f);
-        speed = currentSpeed;
+        speed = defaultSpeed; //currentSpeed;
         music.gameObject.GetComponent<AudioSource>().pitch = 1f;
+    }
+
+    public int LoadBestScore()
+    {
+        if (!PlayerPrefs.HasKey("bestScore"))
+        {
+            PlayerPrefs.SetInt("bestScore", 0);
+            return 0;
+        }
+        else
+        {
+            return PlayerPrefs.GetInt("bestScore");
+        }
+    }
+
+    public void SaveBestScore()
+    {
+        if(PlayerPrefs.GetInt("bestScore") < points)
+        {
+            PlayerPrefs.SetInt("bestScore", points);
+            restartPanel.transform.GetChild(3).gameObject.SetActive(true);
+        }
     }
 }

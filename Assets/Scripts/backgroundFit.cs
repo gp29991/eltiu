@@ -32,7 +32,6 @@ public class backgroundFit : MonoBehaviour
         float cameraHeight = Camera.main.orthographicSize * 2;
         Vector2 cameraSize = new Vector2(Camera.main.aspect * cameraHeight, cameraHeight);
         Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
-        //print("Sprite x: " + spriteSize.x + ", Camera x: " + cameraSize.x);
 
         float scaleX = (cameraSize.x * 1.4f) / spriteSize.x;
         float scaleY = cameraSize.y / spriteSize.y;

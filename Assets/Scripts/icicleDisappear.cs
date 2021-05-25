@@ -15,9 +15,4 @@ public class icicleDisappear : MonoBehaviour
     {
         
     }
-
-    /*void OnDestroy()
-    {
-        this.gameObject.SetActive(false);
-    }*/
 }
